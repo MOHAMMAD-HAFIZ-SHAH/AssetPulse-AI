@@ -7,7 +7,23 @@ router.post("/register", (req, res) => {
 });
 
 router.post("/login", (req, res) => {
-    res.status(200).json({ success: true, message: "Auth login stub ready" });
+    const { email, password } = req.body || {};
+
+    if (!email || !password) {
+        return res.status(400).json({ success: false, message: "Email and password are required." });
+    }
+
+    return res.status(200).json({
+        success: true,
+        message: "Login successful",
+        token: "demo-token",
+        user: {
+            id: "demo-user",
+            email,
+            fullName: email.split("@")[0],
+            role: "admin",
+        },
+    });
 });
 
 router.post("/logout", (req, res) => {

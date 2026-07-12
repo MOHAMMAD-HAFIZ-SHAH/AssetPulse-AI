@@ -9,12 +9,24 @@ import connectDB from "./config/database.js";
 import { Server } from "socket.io";
 
 const PORT = process.env.PORT || 5000;
+const allowedOrigins = [
+    process.env.CLIENT_URL,
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+].filter(Boolean);
 
 const server = http.createServer(app);
 
 export const io = new Server(server, {
     cors: {
-        origin: process.env.CLIENT_URL,
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+                return;
+            }
+
+            callback(null, false);
+        },
         credentials: true,
     },
 });

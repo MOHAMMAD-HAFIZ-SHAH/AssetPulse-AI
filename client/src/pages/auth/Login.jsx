@@ -1,13 +1,19 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AppButton from "../../components/ui/AppButton";
 import AppInput from "../../components/ui/AppInput";
+import { useAuth } from "../../context/AuthContext";
+import api from "../../lib/axios";
 
 export default function Login() {
+    const navigate = useNavigate();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
         email: "",
         password: "",
     });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const handleChange = (e) => {
         setFormData({
@@ -16,9 +22,30 @@ export default function Login() {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
+        setError("");
+        setLoading(true);
+
+        try {
+            const response = await api.post("/auth/login", formData);
+            const payload = response?.data || {};
+            const token = payload.token || payload.accessToken;
+            const user = payload.user || { email: formData.email };
+
+            if (token || payload.success) {
+                login(user, token || "demo-token");
+                navigate("/dashboard");
+                return;
+            }
+
+            setError(payload.message || "Login failed. Please try again.");
+        } catch (err) {
+            const message = err?.response?.data?.message || err?.message || "Login failed. Please try again.";
+            setError(message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -50,6 +77,12 @@ export default function Login() {
                     </p>
 
                     <div className="mt-8 space-y-5">
+                        {error ? (
+                            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                                {error}
+                            </div>
+                        ) : null}
+
                         <AppInput
                             label="Email"
                             name="email"
@@ -70,8 +103,9 @@ export default function Login() {
                         <AppButton
                             type="submit"
                             className="w-full"
+                            disabled={loading}
                         >
-                            Login
+                            {loading ? "Logging in..." : "Login"}
                         </AppButton>
 
                         <div className="flex justify-between text-sm">

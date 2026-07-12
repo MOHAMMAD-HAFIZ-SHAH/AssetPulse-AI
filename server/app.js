@@ -19,6 +19,11 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
+const allowedOrigins = [
+    process.env.CLIENT_URL,
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+].filter(Boolean);
 
 app.disable("x-powered-by");
 
@@ -30,7 +35,14 @@ app.use(
 
 app.use(
     cors({
-        origin: process.env.CLIENT_URL,
+        origin: (origin, callback) => {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+                return;
+            }
+
+            callback(null, false);
+        },
         credentials: true,
     })
 );
