@@ -3,10 +3,13 @@ import { Link } from "react-router-dom";
 import AppButton from "../../components/ui/AppButton";
 import AppInput from "../../components/ui/AppInput";
 
-export default function Login() {
+export default function Signup() {
     const [formData, setFormData] = useState({
+        fullName: "",
         email: "",
+        department: "",
         password: "",
+        confirmPassword: "",
     });
 
     const handleChange = (e) => {
@@ -29,9 +32,9 @@ export default function Login() {
                         AssetPulse AI
                     </h1>
 
-                    <p className="mt-6 text-lg leading-8">
-                        AI Powered Enterprise Asset &
-                        Resource Management Platform
+                    <p className="mt-6 text-lg">
+                        Create your employee account to access the Enterprise Asset &
+                        Resource Management Platform.
                     </p>
                 </div>
             </div>
@@ -39,56 +42,78 @@ export default function Login() {
             <div className="flex flex-1 items-center justify-center p-10">
                 <form
                     onSubmit={handleSubmit}
-                    className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg"
+                    className="w-full max-w-lg rounded-2xl bg-white p-8 shadow-lg"
                 >
                     <h2 className="text-3xl font-bold">
-                        Login
+                        Create Account
                     </h2>
 
                     <p className="mt-2 text-slate-500">
-                        Welcome back.
+                        Sign up as an employee.
                     </p>
 
                     <div className="mt-8 space-y-5">
+
+                        <AppInput
+                            label="Full Name"
+                            name="fullName"
+                            value={formData.fullName}
+                            onChange={handleChange}
+                            placeholder="John Doe"
+                        />
+
                         <AppInput
                             label="Email"
                             name="email"
+                            type="email"
                             value={formData.email}
                             onChange={handleChange}
-                            placeholder="Enter email"
+                            placeholder="john@example.com"
+                        />
+
+                        <AppInput
+                            label="Department"
+                            name="department"
+                            value={formData.department}
+                            onChange={handleChange}
+                            placeholder="Computer Science"
                         />
 
                         <AppInput
                             label="Password"
-                            type="password"
                             name="password"
+                            type="password"
                             value={formData.password}
                             onChange={handleChange}
-                            placeholder="Enter password"
+                            placeholder="********"
+                        />
+
+                        <AppInput
+                            label="Confirm Password"
+                            name="confirmPassword"
+                            type="password"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            placeholder="********"
                         />
 
                         <AppButton
                             type="submit"
                             className="w-full"
                         >
-                            Login
+                            Create Account
                         </AppButton>
 
-                        <div className="flex justify-between text-sm">
+                        <div className="text-center text-sm">
+                            Already have an account?{" "}
                             <Link
-                                to="/forgot-password"
-                                className="text-indigo-600"
+                                to="/login"
+                                className="text-indigo-600 font-medium"
                             >
-                                Forgot Password?
-                            </Link>
-
-                            <Link
-                                to="/signup"
-                                className="text-indigo-600"
-                            >
-                                Create Account
+                                Login
                             </Link>
                         </div>
+
                     </div>
                 </form>
             </div>
